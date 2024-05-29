@@ -220,6 +220,10 @@ resource "aws_lb_listener" "this" {
   protocol          = try(each.value.protocol, var.default_protocol)
   ssl_policy        = contains(["HTTPS", "TLS"], try(each.value.protocol, var.default_protocol)) ? try(each.value.ssl_policy, "ELBSecurityPolicy-TLS13-1-2-Res-2021-06") : try(each.value.ssl_policy, null)
   tags              = merge(local.tags, try(each.value.tags, {}))
+
+  lifecycle {
+    ignore_changes = [default_action[0].target_group_arn]
+  }
 }
 
 ################################################################################
